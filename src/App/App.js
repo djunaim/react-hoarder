@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import firebaseConnection from '../helpers/data/connection';
 import './App.scss';
 
 import MyNavbar from '../components/shared/MyNavbar/MyNavbar';
@@ -15,6 +16,7 @@ import Auth from '../components/pages/Auth/Auth';
 import Home from '../components/pages/Home/Home';
 import MyStuff from '../components/pages/MyStuff/MyStuff';
 import SingleStuff from '../components/pages/SingleStuff/SingleStuff';
+import EditStuff from '../components/pages/EditStuff/EditStuff';
 
 const PublicRoute = ({ component: Component, authed, ...rest }) => {
   const routeChecker = (props) => (authed === false ? <Component {...props} {...rest}/> : <Redirect to={{ pathname: '/', state: { from: props.location } }} />);
@@ -26,9 +28,25 @@ const PrivateRoute = ({ component: Component, authed, ...rest }) => {
   return <Route {...rest} render={(props) => routeChecker(props)} />;
 };
 
+firebaseConnection();
+
 class App extends React.Component {
   state = {
-    authed: true,
+    authed: false,
+  }
+
+  componentDidMount() {
+    this.removeListener = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ authed: true });
+      } else {
+        this.setState({ authed: false });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.removeListener();
   }
 
   render() {
@@ -36,13 +54,14 @@ class App extends React.Component {
     return (
       <div className="App">
         <Router>
-          {/* <MyNavbar authed={authed} /> */}
+          <MyNavbar authed={authed} />
           <Switch>
             <PrivateRoute path="/" exact component={Home} authed={authed} />
             <PrivateRoute path="/stuff/new" exact component={NewStuff} authed={authed} />
             <PublicRoute path="/auth" exact component={Auth} authed={authed} />
             <PrivateRoute path="/stuff" exact component={MyStuff} authed={authed} />
             <PrivateRoute path="/stuff/:stuffId" exact component={SingleStuff} authed={authed} />
+            <PrivateRoute path="/stuff/:stuffId/edit" exact component={EditStuff} authed={authed} />
           </Switch>
         </Router>
       </div>
