@@ -22,7 +22,6 @@ class Stuff extends React.Component {
     return (
       <div className="Stuff col-md-4">
         <div className="card">
-          <img src={item.itemImage} alt="..." />
           <div className="card-body">
             <h4 className="card-title">{item.itemName}</h4>
             {/* <p className="card-text">{item.itemDescription}</p> */}
