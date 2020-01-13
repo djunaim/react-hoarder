@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 import itemsData from '../../../helpers/data/itemsData';
 import authData from '../../../helpers/data/authData';
 
@@ -8,13 +8,15 @@ class SingleStuff extends React.Component {
     item: {},
   }
 
-  // getSingleItemInfo = (itemId) => {
-  //   itemsData.getSingleItem(itemId)
-  //     .then((item) => {
-  //       this.setState({ item });
-  //     })
-  //     .catch((errFromSingleStuff) => console.error(errFromSingleStuff));
-  // }
+  componentDidMount() {
+    const { itemId } = this.props.match.params;
+    itemsData.getSingleItem(itemId)
+      .then((response) => {
+        this.setState({ item: response.data });
+        this.getItemsData();
+      })
+      .catch((errFromSingleStuff) => console.error(errFromSingleStuff));
+  }
 
   getItemsData = () => {
     const uid = authData.getUid();
@@ -25,21 +27,11 @@ class SingleStuff extends React.Component {
       .catch((errFromItemsData) => console.error(errFromItemsData));
   }
 
-  componentDidMount() {
-    const { itemId } = this.props.match.params;
-    itemsData.getSingleItem(itemId)
-      .then((response) => {
-        this.setState({ item: response.data });
-        // this.getSingleItemInfo(itemId);
-      })
-      .catch((errFromSingleStuff) => console.error(errFromSingleStuff));
-  }
-
-  deleteItemEvent = (e) => {
-    e.preventDefault();
+  deleteItem = () => {
     const { itemId } = this.props.match.params;
     itemsData.deleteItem(itemId)
-      .then(() => {
+      .then((items) => {
+        this.setState({ items });
         this.getItemsData();
       })
       .catch((errFromDeleteItem) => console.error(errFromDeleteItem));
@@ -55,7 +47,7 @@ class SingleStuff extends React.Component {
         <img src={item.itemImage} alt="..." />
           <div className="card-body">
             <h4 className="card-title">{item.itemName}</h4>
-            <button className="btn btn-danger" onClick={this.deleteItemEvent}>Delete Item</button>
+            <Link className="btn btn-danger" onClick={this.deleteItem} to="/stuff">Delete Item</Link>
           </div>
         </div>
       </div>
