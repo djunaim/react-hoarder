@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import itemsData from '../../../helpers/data/itemsData';
 import authData from '../../../helpers/data/authData';
@@ -23,14 +22,21 @@ class MyStuff extends React.Component {
       .catch((errFromItemsData) => console.error(errFromItemsData));
   }
 
+  deleteItem = (itemId) => {
+    itemsData.deleteItem(itemId)
+      .then(() => {
+        this.getItemsData();
+      })
+      .catch((errFromDeleteItem) => console.error(errFromDeleteItem));
+  }
+
   render() {
-    const itemId = '12345';
     const { items } = this.state;
     return (
-      <div className="MyStuff">
+      <div className="MyStuff container">
         <h1>My Stuff</h1>
-        <div className="stuff container d-flex flex-wrap">
-          {items.map((item) => <Stuff key={item.id} item={item} />)}
+        <div className="stuff d-flex flex-wrap row">
+          {items.map((item) => <Stuff key={item.id} item={item} deleteItem={this.deleteItem} />)}
         </div>
         {/* <Link className="btn btn-primary" to={`/stuff/${itemId}/edit`}>Edit</Link> */}
       </div>
