@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import itemsData from '../../../helpers/data/itemsData';
 import authData from '../../../helpers/data/authData';
 
@@ -8,14 +7,16 @@ class SingleStuff extends React.Component {
     item: {},
   }
 
+  // use this componentDidUpdate when passing props and updating state
+
   componentDidMount() {
     const { itemId } = this.props.match.params;
     itemsData.getSingleItem(itemId)
       .then((response) => {
         this.setState({ item: response.data });
-        this.getItemsData();
       })
       .catch((errFromSingleStuff) => console.error(errFromSingleStuff));
+    this.getItemsData();
   }
 
   getItemsData = () => {
@@ -27,13 +28,11 @@ class SingleStuff extends React.Component {
       .catch((errFromItemsData) => console.error(errFromItemsData));
   }
 
-  deleteItem = () => {
+  deleteItemEvent = (e) => {
+    e.preventDefault();
     const { itemId } = this.props.match.params;
     itemsData.deleteItem(itemId)
-      .then((items) => {
-        this.setState({ items });
-        this.getItemsData();
-      })
+      .then(() => this.props.history.push('/stuff'))
       .catch((errFromDeleteItem) => console.error(errFromDeleteItem));
   }
 
@@ -47,7 +46,7 @@ class SingleStuff extends React.Component {
         <img src={item.itemImage} alt="..." />
           <div className="card-body">
             <h4 className="card-title">{item.itemName}</h4>
-            <Link className="btn btn-danger" onClick={this.deleteItem} to="/stuff">Delete Item</Link>
+            <button className="btn btn-danger" onClick={this.deleteItemEvent}>Delete Item</button>
           </div>
         </div>
       </div>
