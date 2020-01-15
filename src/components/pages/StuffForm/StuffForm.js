@@ -1,4 +1,6 @@
 import React from 'react';
+import authData from '../../../helpers/data/authData';
+import itemsData from '../../../helpers/data/itemsData';
 
 class StuffForm extends React.Component {
   state = {
@@ -20,6 +22,19 @@ class StuffForm extends React.Component {
   descriptionChange = (e) => {
     e.preventDefault();
     this.setState({ itemDescription: e.target.value });
+  }
+
+  saveItemEvent = (e) => {
+    e.preventDefault();
+    const newItem = {
+      itemName: this.state.itemName,
+      itemDescription: this.state.itemDescription,
+      itemImage: this.state.itemImage,
+      uid: authData.getUid(),
+    };
+    itemsData.saveItem(newItem)
+      .then(() => this.props.history.push('/stuff'))
+      .catch((errFromSaveItem) => console.error(errFromSaveItem));
   }
 
   render() {
@@ -60,7 +75,7 @@ class StuffForm extends React.Component {
             onChange={this.descriptionChange}
           />
         </div>
-        <button className="btn btn-success" onClick={this.saveBoardEvent}>Save Item</button>
+        <button className="btn btn-success" onClick={this.saveItemEvent}>Save Item</button>
       </form>
     );
   }
