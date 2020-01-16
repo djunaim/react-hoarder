@@ -26,6 +26,7 @@ class Stuff extends React.Component {
             <h4 className="card-title">{item.itemName}</h4>
             {/* <p className="card-text">{item.itemDescription}</p> */}
             <Link className="btn btn-secondary" to={`/stuff/${item.id}`}>View Single Item</Link>
+            <Link className="btn btn-warning" to={`/stuff/${item.id}/edit`}>Edit</Link>
             <button className="btn btn-danger" onClick={this.deleteItemEvent}>Delete Item</button>
           </div>
         </div>
